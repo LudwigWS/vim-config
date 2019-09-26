@@ -19,7 +19,7 @@ augroup user_plugin_filetype " {{{
 	autocmd VimResized * tabdo wincmd =
 
 	" Force write shada on leaving nvim
-	autocmd VimLeave * if has('nvim') | wshada! | else | wviminfo! | endif
+	" autocmd VimLeave * if has('nvim') | wshada! | else | wviminfo! | endif
 
 	" Check if file changed when its window is focus, more eager than 'autoread'
 	autocmd FocusGained * checktime

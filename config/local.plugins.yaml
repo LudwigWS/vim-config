@@ -1,0 +1,7 @@
+- repo: '/usr/local/opt/fzf'
+- repo: junegunn/fzf.vim
+# EasyAlign
+- { repo: junegunn/vim-easy-align, lazy: 1 }
+# - repo: junegunn/vim-peekaboo
+# - { repo: wsdjeg/dein-ui.vim, lazy: 1 }
+- {repo: iamcco/markdown-preview.nvim, on_ft: ['markdown', 'pandoc.markdown', 'rmd'], build: 'cd app & yarn install'}
