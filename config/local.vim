@@ -114,3 +114,43 @@ let g:mkdp_port = ''
 " preview page title
 " ${name} will be replace with the file name
 let g:mkdp_page_title = '「${name}」'
+
+function! Rename()
+    " 参考文章：https://www.jianshu.com/p/d9887b2bf894
+    " 将首字母切换为小写
+    :%s/_\(\w\)/\u\1/g
+    " 将首字母大写的切换成小写
+    :%s/^\(\w\)/\L\1/g
+endfunction
+command! Rename call Rename()
+
+function! Mapper()
+    :%s/,/,\r/g
+    :g/^$/d
+    :%s/^\s*//g
+    :v/,/norm A,
+    while match(readfile(expand("%:p")),",")!=-1
+        :normal gg
+        :normal ye
+        :let tmp = @0
+        " 可用echo tmp 测试
+        :normal dd
+        :normal G
+        :let template1 = "<if test=\"" . tmp .  " != null\">\n\t" . tmp . "\n</if>"
+        " execute "normal i" . template1
+        put =template1
+        :w!
+    endwhile
+    " 使用g命令先匹配行，然后执行s命令。实现条件替换
+    :g/if/norm :s/_\(\w\)/\u\1/g
+    :g/if/norm :s/^\(\w\)/\L\1/g
+    :v/if/norm A,
+endfunction
+
+function! Java2sql()
+    :set smartcase
+    :%s/\([^ .*+-]\)\([A-Z].\)/\1_\2/g
+    "ggguG
+    :norm ggguG
+endfunction
+command! Java2sql call Java2sql()
