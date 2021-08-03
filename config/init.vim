@@ -52,10 +52,10 @@ let g:loaded_logiPat = 1
 let g:loaded_rrhelper = 1
 let g:no_gitrebase_maps = 1
 
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
+" let g:loaded_netrw = 1
+" let g:loaded_netrwPlugin = 1
+" let g:loaded_netrwSettings = 1
+" let g:loaded_netrwFileHandlers = 1
 
 " Set main configuration directory as parent directory
 let $VIM_PATH =
@@ -135,8 +135,12 @@ function! s:use_dein()
 	let l:cache_path = $DATA_PATH . '/dein'
 
 	if has('vim_starting')
-		" Use dein as a plugin manager
-		let g:dein#auto_recache = 1
+		let g:dein#auto_recache = v:true
+		" let g:dein#lazy_rplugins = v:true
+		" let g:dein#lazy_rplugins = 1
+		" let g:dein#auto_recache = 1
+		" let g:dein#install_progress_type = 'title'
+		" let g:dein#enable_notification = v:true
 		let g:dein#install_max_processes = 12
 
 		" Add dein to vim's runtimepath
@@ -193,6 +197,11 @@ function! s:use_dein()
 			endif
 			call dein#install()
 		endif
+	endif
+
+	if has('vim_starting') && ! has('nvim')
+		filetype plugin indent on
+		syntax enable
 	endif
 endfunction
 
@@ -322,7 +331,7 @@ function! s:load_yaml(filename)
 	elseif s:convert_tool ==# 'python'
 		let l:cmd = "python -c 'import sys,yaml,json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))'"
 	elseif s:convert_tool ==# 'yq'
-		let l:cmd = 'yq r -j -'
+		let l:cmd = 'yq e -j -I 0'
 	else
 		let l:cmd = s:convert_tool
 	endif
@@ -342,13 +351,13 @@ endfunction
 function! s:find_yaml2json_method()
 	if exists('*json_decode')
 		" Try different tools to convert YAML into JSON:
-		if executable('yj')
+		if executable('yj') && s:test_yaml2json('yj')
 			" See https://github.com/sclevine/yj
 			return 'yj'
-		elseif executable('yq')
+		elseif executable('yq') && s:test_yaml2json('yq')
 			" See https://github.com/mikefarah/yq
 			return 'yq'
-		elseif executable('yaml2json') && s:test_yaml2json()
+		elseif executable('yaml2json') && s:test_yaml2json('yaml2json')
 			" See https://github.com/bronze1man/yaml2json
 			return 'yaml2json'
 		" Or, try ruby. Which is installed on every macOS by default
@@ -368,10 +377,10 @@ function! s:find_yaml2json_method()
 	endif
 endfunction
 
-function! s:test_yaml2json()
+function! s:test_yaml2json(cmd)
 	" Test yaml2json capabilities
 	try
-		let result = system('yaml2json', "---\na: 1.5")
+		let result = system(a:cmd, "---\na: 1.5")
 		if v:shell_error != 0
 			return 0
 		endif

@@ -14,12 +14,12 @@ augroup user_plugin_filetype " {{{
 	" 3. Preview window
 	" 4. Completion popup menu is visible
 	autocmd WinEnter,BufEnter,InsertLeave *
-		\ if ! &cursorline && &filetype !~# '^\(denite\|clap_\)'
+		\ if ! &cursorline && &filetype !~# '^\(denite\|clap_\|.*quickpick\)'
 		\      && ! &previewwindow && ! pumvisible()
 		\ | setlocal cursorline
 		\ | endif
 	autocmd WinLeave,BufLeave,InsertEnter *
-		\ if &cursorline && &filetype !~# '^\(denite\|clap_\)'
+		\ if &cursorline && &filetype !~# '^\(denite\|clap_\|.*quickpick\)'
 		\      && ! &previewwindow && ! pumvisible()
 		\ | setlocal nocursorline
 		\ | endif
@@ -41,13 +41,15 @@ augroup user_plugin_filetype " {{{
 
 	autocmd Syntax * if line('$') > 5000 | syntax sync minlines=200 | endif
 
-	" Neovim terminal settings
 	if has('nvim-0.5')
-		autocmd TermOpen * setlocal modifiable
+		" Highlight yank
 		try
 			autocmd TextYankPost *
 				\ silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=150}
 		endtry
+
+		" Neovim terminal settings
+		autocmd TermOpen * setlocal modifiable
 	endif
 
 	" Update filetype on save if empty
@@ -67,7 +69,7 @@ augroup user_plugin_filetype " {{{
 	" Credits: https://github.com/farmergreg/vim-lastplace
 	autocmd BufReadPost *
 		\ if index(['gitcommit', 'gitrebase', 'svn', 'hgcommit'], &buftype) == -1 &&
-		\      index(['quickfix', 'nofile', 'help'], &buftype) == -1 &&
+		\      index(['quickfix', 'nofile', 'help', 'prompt'], &buftype) == -1 &&
 		\      ! &diff && ! &previewwindow &&
 		\      line("'\"") > 0 && line("'\"") <= line("$")
 		\|   if line("w$") == line("$")
