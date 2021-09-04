@@ -376,7 +376,7 @@ augroup user_plugin_filetype " {{{
 		\ | setlocal tabstop=4 shiftwidth=4 textwidth=80
 
 	autocmd FileType markdown
-		\ setlocal expandtab spell autoindent formatoptions=tcroqn2 comments=n:>
+		\ setlocal expandtab  autoindent formatoptions=tcroqn2 comments=n:>
 
 	" https://webpack.github.io/docs/webpack-dev-server.html#working-with-editors-ides-supporting-safe-write
 	autocmd FileType css,javascript,javascriptreact setlocal backupcopy=yes
