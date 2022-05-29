@@ -1,6 +1,10 @@
 -- rafi user functions
 -- https://github.com/rafi/vim-config
 
+if vim.fn.has('nvim-0.7') == 0 then
+	return
+end
+
 local lists = {
 	qf = {
 		qf_isLoc = 0,
@@ -54,13 +58,18 @@ user.diagnostic = {}
 -- Set locations with diagnostics and open the list.
 user.diagnostic.publish_loclist = function(toggle)
 	if vim.api.nvim_buf_get_option(0, 'filetype') ~= 'qf' then
-		vim.lsp.diagnostic.set_loclist({ open = false })
+		vim.diagnostic.setloclist({ open = not toggle })
 	end
 	if toggle then
 		user.loclist.toggle()
-	else
-		user.loclist.open()
 	end
+end
+
+user.diagnostic.disable = function(bufnr)
+	vim.diagnostic.disable(bufnr)
+	vim.defer_fn(function()
+		vim.diagnostic.reset(nil, bufnr)
+	end, 1000)
 end
 
 -- Git
